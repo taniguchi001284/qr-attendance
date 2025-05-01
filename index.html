@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>受付QRスキャン</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
@@ -10,16 +9,22 @@
   <h2>QRコードをかざしてください</h2>
   <div id="reader" style="width:300px;"></div>
 
-  <script>
-    function onScanSuccess(qrCodeMessage) {
-      const memberId = encodeURIComponent(qrCodeMessage);
-      const secretKey = "abc123"; // iPadからのみ送るキー
-      const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
+  <!-- 成功音の読み込み -->
+  <audio id="successSound" src="https://cdn.jsdelivr.net/gh/hajimehoshi/oto/sample/beep.mp3" preload="auto"></audio>
 
-      fetch(url)
+  <script>
+    function onScanSuccess(qrMessage) {
+      // 音を鳴らす
+      document.getElementById("successSound").play();
+
+      fetch(qrMessage)
         .then(response => response.text())
-        .then(data => alert(data))
-        .catch(err => alert("送信エラー"));
+        .then(data => {
+          alert("出席記録が完了しました");
+        })
+        .catch(err => {
+          alert("送信に失敗しました");
+        });
     }
 
     new Html5Qrcode("reader").start(
