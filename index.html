@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>受付QRスキャン</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <h2>QRコードをかざしてください</h2>
+  <div id="reader" style="width:300px;"></div>
+  <script>
+    function onScanSuccess(qrMessage) {
+      fetch(qrMessage)
+        .then(response => response.text())
+        .then(data => alert("出席記録が完了しました"))
+        .catch(err => alert("送信に失敗しました"));
+    }
+
+    new Html5Qrcode("reader").start(
+      { facingMode: "user" }, // 前面カメラ
+      { fps: 10, qrbox: 250 },
+      onScanSuccess
+    );
+  </script>
+</body>
+</html>
