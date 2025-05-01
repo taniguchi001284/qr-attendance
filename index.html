@@ -10,29 +10,31 @@
   <div id="reader" style="width:300px;"></div>
   <script>
     function onScanSuccess(qrMessage) {
-  console.log("読み取り結果:", qrMessage);  // デバッグ用に追加
-  alert("スキャン成功: " + qrMessage);
-  fetch(qrMessage)
-    .then(response => {
-      if (!response.ok) throw new Error("HTTPエラー: " + response.status);
-      return response.text();
-    })
-    .then(data => alert("送信成功: " + data))
-    .catch(err => alert("送信失敗: " + err.message));
-}
+      // QRコードから得たURLでリクエストを送信
+      fetch(qrMessage, {
+        method: 'GET',
+        headers: {
+          'Access-Control-Allow-Origin': '*', // 任意のオリジンを許可
+          'Access-Control-Allow-Methods': 'GET, POST'
+        }
+      })
+      .then(response => response.text())
+      .then(data => {
+        // 成功時の処理
+        alert("出席記録が完了しました");
+      })
+      .catch(err => {
+        // エラーハンドリング
+        alert("送信に失敗しました");
+      });
+    }
 
-    Html5Qrcode.getCameras().then(devices => {
-      if (devices.length > 0) {
-        const backCamera = devices.find(d => d.label.toLowerCase().includes("back")) || devices[0];
-        new Html5Qrcode("reader").start(
-          backCamera.id,
-          { fps: 10, qrbox: 250 },
-          onScanSuccess
-        );
-      } else {
-        alert("カメラが見つかりません");
-      }
-    }).catch(err => alert("カメラ初期化失敗: " + err));
+    // QRコード読み取りの開始
+    new Html5Qrcode("reader").start(
+      { facingMode: "user" }, // 前面カメラ
+      { fps: 10, qrbox: 250 }, // フレームレートとQRコード枠サイズ
+      onScanSuccess
+    );
   </script>
 </body>
 </html>
