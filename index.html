@@ -2,26 +2,11 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>音声テスト（Safari確認用）</title>
+  <title>音声テスト</title>
 </head>
 <body>
-  <h1>音声テスト</h1>
-  <button onclick="playBeep()">音を鳴らす</button>
-  <audio id="beep-sound" src="https://www.soundjay.com/button/beep-07.mp3" preload="auto"></audio>
-
-  <script>
-    function playBeep() {
-      const sound = document.getElementById("beep-sound");
-      sound.currentTime = 0;
-      sound.play()
-        .then(() => {
-          console.log("再生成功");
-        })
-        .catch(err => {
-          alert("音が再生されませんでした。エラー: " + err.message);
-          console.error(err);
-        });
-    }
-  </script>
+  <h2>ボタンを押すと音が出ます</h2>
+  <button onclick="document.getElementById('beep').play()">音を鳴らす</button>
+  <audio id="beep" src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" preload="auto"></audio>
 </body>
 </html>
