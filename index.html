@@ -17,9 +17,10 @@
     let scanning = false;
 
     function onScanSuccess(qrCodeMessage) {
-      if (scanning) return; // 読み取り後すぐに再読み取りしない
+      if (scanning) return;
       scanning = true;
 
+      // 音を鳴らす
       document.getElementById("successSound").play().catch(e => {
         console.log("音声再生エラー:", e);
       });
@@ -28,12 +29,9 @@
       const secretKey = "abc123";
       const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
 
-      fetch(url)
-        .then(response => response.text())
-        .then(data => alert(data))
-        .catch(err => alert("送信エラー"));
+      fetch(url).catch(err => console.log("送信エラー"));
 
-      // 一時停止 → 3秒後に再開
+      // スキャン停止 → 3秒後に再開
       html5QrCode.stop().then(() => {
         setTimeout(() => {
           html5QrCode.start(
@@ -59,4 +57,3 @@
   </script>
 </body>
 </html>
-
