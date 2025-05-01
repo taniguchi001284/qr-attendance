@@ -10,15 +10,16 @@
   <div id="reader" style="width:300px;"></div>
   <script>
     function onScanSuccess(qrMessage) {
-      alert("スキャン成功: " + qrMessage);
-      fetch(qrMessage)
-        .then(response => {
-          if (!response.ok) throw new Error("HTTPエラー: " + response.status);
-          return response.text();
-        })
-        .then(data => alert("送信成功: " + data))
-        .catch(err => alert("送信失敗: " + err.message));
-    }
+  console.log("読み取り結果:", qrMessage);  // デバッグ用に追加
+  alert("スキャン成功: " + qrMessage);
+  fetch(qrMessage)
+    .then(response => {
+      if (!response.ok) throw new Error("HTTPエラー: " + response.status);
+      return response.text();
+    })
+    .then(data => alert("送信成功: " + data))
+    .catch(err => alert("送信失敗: " + err.message));
+}
 
     Html5Qrcode.getCameras().then(devices => {
       if (devices.length > 0) {
