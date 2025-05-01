@@ -2,58 +2,26 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>受付QRスキャン</title>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <title>音声テスト（Safari確認用）</title>
 </head>
 <body>
-  <h2>QRコードをかざしてください</h2>
-  <button id="start-btn">スキャン開始</button>
-  <div id="reader" style="width:300px; display:none;"></div>
-  <audio id="successSound" src="https://cdn.jsdelivr.net/gh/hajimehoshi/oto/sample/beep.mp3" preload="auto"></audio>
+  <h1>音声テスト</h1>
+  <button onclick="playBeep()">音を鳴らす</button>
+  <audio id="beep-sound" src="https://www.soundjay.com/button/beep-07.mp3" preload="auto"></audio>
 
   <script>
-    let html5QrCode;
-    let scanning = false;
-
-    function onScanSuccess(qrCodeMessage) {
-      if (scanning) return;
-      scanning = true;
-
-      // 音を鳴らす
-      document.getElementById("successSound").play().catch(e => {
-        console.log("音声再生エラー:", e);
-      });
-
-      const memberId = encodeURIComponent(qrCodeMessage);
-      const secretKey = "abc123";
-      const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
-
-      fetch(url).catch(err => console.log("送信エラー"));
-
-      // スキャン停止 → 3秒後に再開
-      html5QrCode.stop().then(() => {
-        setTimeout(() => {
-          html5QrCode.start(
-            { facingMode: "user" },
-            { fps: 10, qrbox: 250 },
-            onScanSuccess
-          );
-          scanning = false;
-        }, 3000);
-      });
+    function playBeep() {
+      const sound = document.getElementById("beep-sound");
+      sound.currentTime = 0;
+      sound.play()
+        .then(() => {
+          console.log("再生成功");
+        })
+        .catch(err => {
+          alert("音が再生されませんでした。エラー: " + err.message);
+          console.error(err);
+        });
     }
-
-    document.getElementById("start-btn").addEventListener("click", function () {
-      document.getElementById("reader").style.display = "block";
-      html5QrCode = new Html5Qrcode("reader");
-
-      html5QrCode.start(
-        { facingMode: "user" },
-        { fps: 10, qrbox: 250 },
-        onScanSuccess
-      );
-    });
   </script>
 </body>
 </html>
