@@ -1,30 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QRスキャンテスト</title>
-  <script src="https://unpkg.com/html5-qrcode"></script>
-</head>
-<body>
-  <div id="reader" style="width:300px;"></div>
-  <script>
-    function onScanSuccess(decodedText, decodedResult) {
-      alert("読み取り成功: " + decodedText);
-    }
+<script>
+  function onScanSuccess(qrMessage) {
+    alert("読み取り成功: " + qrMessage); // 読み取った内容をそのまま表示
+  }
 
-    Html5Qrcode.getCameras().then(devices => {
-      if (devices && devices.length) {
-        const cameraId = devices[0].id;
-        const qrCodeScanner = new Html5Qrcode("reader");
-        qrCodeScanner.start(
-          cameraId,
-          { fps: 10, qrbox: 250 },
-          onScanSuccess
-        );
-      }
-    }).catch(err => {
-      console.error("カメラエラー:", err);
-    });
-  </script>
-</body>
-</html>
+  new Html5Qrcode("reader").start(
+    { facingMode: "user" }, 
+    { fps: 10, qrbox: 250 },
+    onScanSuccess
+  );
+</script>
