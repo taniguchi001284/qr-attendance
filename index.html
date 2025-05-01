@@ -2,41 +2,31 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>受付QRスキャン</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>受付QRスキャン</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
   <h2>QRコードをかざしてください</h2>
-  <div id="reader" style="width: 300px;"></div>
+  <div id="reader" style="width:300px;"></div>
 
   <script>
-    function onScanSuccess(qrMessage) {
-      // imgタグを使ってCORSを回避して送信
-      const img = new Image();
-      img.src = qrMessage + (qrMessage.includes('?') ? '&' : '?') + 'ts=' + new Date().getTime(); // キャッシュ防止
+    function onScanSuccess(qrCodeMessage) {
+      const memberId = encodeURIComponent(qrCodeMessage);
+      const secretKey = "abc123"; // iPadからのみ送るキー
+      const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
 
-      img.onload = () => {
-        alert("出席記録が完了しました");
-      };
-
-      img.onerror = () => {
-        alert("送信に失敗しました");
-      };
+      fetch(url)
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(err => alert("送信エラー"));
     }
 
-    // QRスキャンの開始
-    const html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start(
-      { facingMode: "environment" }, // 背面カメラ
+    new Html5Qrcode("reader").start(
+      { facingMode: "environment" },
       { fps: 10, qrbox: 250 },
-      onScanSuccess,
-      errorMessage => {
-        // スキャンエラー時の処理（省略可能）
-      }
-    ).catch(err => {
-      console.error("QRコードスキャンの開始に失敗:", err);
-    });
+      onScanSuccess
+    );
   </script>
 </body>
 </html>
