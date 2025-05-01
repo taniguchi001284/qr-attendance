@@ -8,31 +8,27 @@
 <body>
   <h2>QRコードをかざしてください</h2>
   <div id="reader" style="width:300px;"></div>
+
   <script>
     function onScanSuccess(qrMessage) {
-      // QRコードから得たURLでリクエストを送信
-      fetch(qrMessage, {
-        method: 'GET',
-        headers: {
-          'Access-Control-Allow-Origin': '*', // 任意のオリジンを許可
-          'Access-Control-Allow-Methods': 'GET, POST'
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", qrMessage, true);
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          alert("出席記録が完了しました");
+        } else {
+          alert("送信に失敗しました (HTTPステータス: " + xhr.status + ")");
         }
-      })
-      .then(response => response.text())
-      .then(data => {
-        // 成功時の処理
-        alert("出席記録が完了しました");
-      })
-      .catch(err => {
-        // エラーハンドリング
-        alert("送信に失敗しました");
-      });
+      };
+      xhr.onerror = function () {
+        alert("送信に失敗しました (ネットワークエラー)");
+      };
+      xhr.send();
     }
 
-    // QRコード読み取りの開始
     new Html5Qrcode("reader").start(
-      { facingMode: "user" }, // 前面カメラ
-      { fps: 10, qrbox: 250 }, // フレームレートとQRコード枠サイズ
+      { facingMode: "user" },
+      { fps: 10, qrbox: 250 },
       onScanSuccess
     );
   </script>
