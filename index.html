@@ -2,11 +2,42 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>音声テスト</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>受付QRスキャン</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
-  <h2>ボタンを押すと音が出ます</h2>
-  <button onclick="document.getElementById('beep').play()">音を鳴らす</button>
-  <audio id="beep" src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" preload="auto"></audio>
-</body>
-</html>
+  <h2>QRコードをかざしてください</h2>
+  <div id="reader" style="width:300px;"></div>
+  <button id="startButton">スキャンを開始</button>
+
+  <audio id="beep" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+  <script>
+    const beepSound = document.getElementById("beep");
+    const startButton = document.getElementById("startButton");
+
+    startButton.addEventListener("click", () => {
+      beepSound.play(); // 初回の再生でユーザー操作を使ってSafariに再生を許可
+
+      new Html5Qrcode("reader").start(
+        { facingMode: "user" },
+        { fps: 10, qrbox: 250 },
+        (qrCodeMessage) => {
+          const memberId = encodeURIComponent(qrCodeMessage);
+          const secretKey = "abc123";
+          const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
+
+          beepSound.play(); // 読み取り時に再生
+
+          fetch(url)
+            .then(response => response.text())
+            .catch(err => console.error("送信エラー"));
+
+          // 3秒間スキャンを停止
+          this.pause();
+          setTimeout(() => this.resume(), 3000);
+        }
+      );
+
+      startButton.disabled = true;
