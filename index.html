@@ -8,21 +8,18 @@
 </head>
 <body>
   <h2>QRコードをかざしてください</h2>
-  <div id="reader" style="width:300px;"></div>
-
-  <!-- 成功時の効果音（自由に音源URLを差し替え可能） -->
+  <button id="start-btn">スキャン開始</button>
+  <div id="reader" style="width:300px; display:none;"></div>
   <audio id="successSound" src="https://cdn.jsdelivr.net/gh/hajimehoshi/oto/sample/beep.mp3" preload="auto"></audio>
 
   <script>
     function onScanSuccess(qrCodeMessage) {
-      // 音を鳴らす
-      const sound = document.getElementById("successSound");
-      sound.play().catch(e => {
-        console.log("音声再生に失敗しました:", e);
+      document.getElementById("successSound").play().catch(e => {
+        console.log("音声再生エラー:", e);
       });
 
       const memberId = encodeURIComponent(qrCodeMessage);
-      const secretKey = "abc123"; // iPadからのみ送るキー
+      const secretKey = "abc123";
       const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
 
       fetch(url)
@@ -31,11 +28,14 @@
         .catch(err => alert("送信エラー"));
     }
 
-    new Html5Qrcode("reader").start(
-      { facingMode: "user" },
-      { fps: 10, qrbox: 250 },
-      onScanSuccess
-    );
+    document.getElementById("start-btn").addEventListener("click", function () {
+      document.getElementById("reader").style.display = "block";
+      new Html5Qrcode("reader").start(
+        { facingMode: "user" },
+        { fps: 10, qrbox: 250 },
+        onScanSuccess
+      );
+    });
   </script>
 </body>
 </html>
