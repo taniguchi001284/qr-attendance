@@ -13,7 +13,13 @@
   <audio id="successSound" src="https://cdn.jsdelivr.net/gh/hajimehoshi/oto/sample/beep.mp3" preload="auto"></audio>
 
   <script>
+    let html5QrCode;
+    let scanning = false;
+
     function onScanSuccess(qrCodeMessage) {
+      if (scanning) return; // 読み取り後すぐに再読み取りしない
+      scanning = true;
+
       document.getElementById("successSound").play().catch(e => {
         console.log("音声再生エラー:", e);
       });
@@ -26,11 +32,25 @@
         .then(response => response.text())
         .then(data => alert(data))
         .catch(err => alert("送信エラー"));
+
+      // 一時停止 → 3秒後に再開
+      html5QrCode.stop().then(() => {
+        setTimeout(() => {
+          html5QrCode.start(
+            { facingMode: "user" },
+            { fps: 10, qrbox: 250 },
+            onScanSuccess
+          );
+          scanning = false;
+        }, 3000);
+      });
     }
 
     document.getElementById("start-btn").addEventListener("click", function () {
       document.getElementById("reader").style.display = "block";
-      new Html5Qrcode("reader").start(
+      html5QrCode = new Html5Qrcode("reader");
+
+      html5QrCode.start(
         { facingMode: "user" },
         { fps: 10, qrbox: 250 },
         onScanSuccess
@@ -39,3 +59,4 @@
   </script>
 </body>
 </html>
+
