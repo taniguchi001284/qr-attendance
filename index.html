@@ -16,33 +16,35 @@
     let html5QrCode;
     let scanning = false;
 
-    function onScanSuccess(qrCodeMessage) {
-      if (scanning) return;
-      scanning = true;
+function onScanSuccess(qrCodeMessage) {
+  if (scanning) return;
+  scanning = true;
 
-      // 音を鳴らす
-      document.getElementById("successSound").play().catch(e => {
-        console.log("音声再生エラー:", e);
-      });
+  // 音を鳴らす + 音量を設定
+  const audio = document.getElementById("successSound");
+  audio.volume = 0.5; // 音量を50%に設定
+  audio.play().catch(e => {
+    console.log("音声再生エラー:", e);
+  });
 
-      const memberId = encodeURIComponent(qrCodeMessage);
-      const secretKey = "abc123";
-      const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
+  const memberId = encodeURIComponent(qrCodeMessage);
+  const secretKey = "abc123";
+  const url = `https://script.google.com/macros/s/AKfycbywUsVJegJFdfbJW3gLrVk9XTCjMDijUmNV7NqL-gvlSV2JfxF_GsWjcDRz4PzGsvuG/exec?id=${memberId}&key=${secretKey}`;
 
-      fetch(url).catch(err => console.log("送信エラー"));
+  fetch(url).catch(err => console.log("送信エラー"));
 
-      // スキャン停止 → 3秒後に再開
-      html5QrCode.stop().then(() => {
-        setTimeout(() => {
-          html5QrCode.start(
-            { facingMode: "user" },
-            { fps: 20, qrbox: 250 },
-            onScanSuccess
-          );
-          scanning = false;
-        }, 3000);
-      });
-    }
+  html5QrCode.stop().then(() => {
+    setTimeout(() => {
+      html5QrCode.start(
+        { facingMode: "user" },
+        { fps: 20, qrbox: 250 },
+        onScanSuccess
+      );
+      scanning = false;
+    }, 3000);
+  });
+}
+
 
     document.getElementById("start-btn").addEventListener("click", function () {
       document.getElementById("reader").style.display = "block";
