@@ -36,7 +36,7 @@
         setTimeout(() => {
           html5QrCode.start(
             { facingMode: "user" },
-            { fps: 10, qrbox: 250 },
+            { fps: 20, qrbox: 250 },
             onScanSuccess
           );
           scanning = false;
@@ -50,7 +50,7 @@
 
       html5QrCode.start(
         { facingMode: "user" },
-        { fps: 10, qrbox: 250 },
+        { fps: 20, qrbox: 250 },
         onScanSuccess
       );
     });
