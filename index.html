@@ -46,16 +46,28 @@ function onScanSuccess(qrCodeMessage) {
 }
 
 
-    document.getElementById("start-btn").addEventListener("click", function () {
-      document.getElementById("reader").style.display = "block";
-      html5QrCode = new Html5Qrcode("reader");
+document.getElementById("start-btn").addEventListener("click", function () {
+  const audio = document.getElementById("successSound");
 
-      html5QrCode.start(
-        { facingMode: "user" },
-        { fps: 20, qrbox: 250 },
-        onScanSuccess
-      );
-    });
+  // 🔽🔽 ここで音声の再生許可を取得します（無音再生してから停止）
+  audio.volume = 0.01; // ほぼ無音
+  audio.play().then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+  }).catch(err => {
+    console.log("音声再生許可の取得失敗:", err);
+  });
+
+  // スキャナー表示と開始
+  document.getElementById("reader").style.display = "block";
+  html5QrCode = new Html5Qrcode("reader");
+
+  html5QrCode.start(
+    { facingMode: "user" },
+    { fps: 20, qrbox: 250 },
+    onScanSuccess
+  );
+});
   </script>
 </body>
 </html>
